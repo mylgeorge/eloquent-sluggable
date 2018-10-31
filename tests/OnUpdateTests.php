@@ -82,6 +82,24 @@ class OnUpdateTests extends TestCase
     }
 
     /**
+     * Test that the slug isn't set to null if onUpdate is false.
+     */
+    public function testSlugDoesNotChangeIfSlugNotProvidedInModel()
+    {
+        $post = Post::create([
+            'title' => 'My First Post'
+        ]);
+        $post->save();
+        $this->assertEquals('my-first-post', $post->slug);
+
+        $post = Post::whereKey($post->id)->get(['id'])->first();
+        $post->save();
+
+        $post = Post::findOrFail($post->id);
+        $this->assertEquals('my-first-post', $post->slug);
+    }
+
+    /**
      * Test that the slug is not regenerated if onUpdate is true
      * but the source fields didn't change, even with multiple
      * increments of the same slug.
